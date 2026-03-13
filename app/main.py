@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from services.gabarito_service import gerar_gabarito
+from services.omr_service import corrigir_gabarito
 
 app = Flask(__name__)
 
@@ -30,6 +31,15 @@ def rota_gerar_gabarito():
     'mensagem': 'gabarito gerado',
     'caminho': caminho
   })
+
+@app.route('/corrigir-gabarito', methods=['POST'])
+def rota_corrigir_gabarito():
+  file = request.file.get('file')
+  metadata = request.form.get('metadata')
+
+  resultado = corrigir_gabarito(file, metadata)
+
+  return jsonify(resultado)
 
 if __name__ == '__main__':
   app.run(debug=True)
