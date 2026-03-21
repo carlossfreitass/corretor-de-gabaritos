@@ -135,14 +135,14 @@ def desenhar_grade(draw, x1, y1, x2, y2, total_questoes, alternativas, largura, 
   # LETRAS
   for i in range(alternativas):
     x = x_inicio + i * espacamento_coluna
-    draw.text((x, y_inicio - 30), letras[i].lower(), fill='black', anchor='mm', font=font_texto)
+    draw.text((x + 3, y_inicio - 30), letras[i].lower(), fill='black', anchor='mm', font=font_texto)
   
   # QUESTÕES
   for q in range(total_questoes):
     y = y_inicio + q * espacamento_linha
 
     draw.text(
-      (x_inicio - 50, y + 20),
+      (x_inicio - 32, y + 20),
       f'Q{q + 1}:',
       fill='black',
       anchor='rm',
@@ -154,7 +154,7 @@ def desenhar_grade(draw, x1, y1, x2, y2, total_questoes, alternativas, largura, 
       x = x_inicio + a * espacamento_coluna
 
       draw.ellipse(
-        (x - raio, (y + 20) - raio, x + raio, (y + 20) + raio),
+        (x - raio, (y + 26) - raio, x + raio, (y + 27) + raio),
         outline='black',
         width=3
       )
