@@ -15,16 +15,16 @@ def inicio():
 def rota_gerar_gabarito():
   data = request.json
 
+  nome_prova = data.get('nome_prova')
+  id_prova = data.get('id_prova')
   total_questoes = data.get('total_questoes')
   alternativas = data.get('alternativas')
-  orientacao = data.get('orientacao')
-  id_prova = data.get('id_prova')
 
   caminho = gerar_gabarito(
+    nome_prova,
+    id_prova,
     total_questoes,
-    alternativas,
-    orientacao,
-    id_prova
+    alternativas
   )
 
   return jsonify({
