@@ -19,7 +19,6 @@ def calcular_dimensoes(total_questoes):
     margem_direita = 100
 
     largura = largura_base_qr + (colunas * largura_por_coluna) + margem_direita
-    # Aumentada a altura base para acomodar a nova seção de nome sem apertar o rodapé
     altura = int(700 + (questoes_por_coluna * 85))
 
     return int(largura), int(altura)
