@@ -34,7 +34,7 @@ def rota_gerar_gabarito():
 
 @app.route('/corrigir-gabarito', methods=['POST'])
 def rota_corrigir_gabarito():
-  file = request.file.get('file')
+  file = request.files.get('file')
   metadata = request.form.get('metadata')
 
   resultado = corrigir_gabarito(file, metadata)
