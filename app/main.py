@@ -35,10 +35,10 @@ def rota_gerar_gabarito():
 @app.route('/corrigir-gabarito', methods=['POST'])
 def rota_corrigir_gabarito():
   file = request.files.get('file')
-  metadata = request.form.get('metadata')
+  if not file:
+    return jsonify({"erro": "Nenhum arquivo de imagem enviado"}), 400
 
-  resultado = corrigir_gabarito(file, metadata)
-
+  resultado = corrigir_gabarito(file)
   return jsonify(resultado)
 
 if __name__ == '__main__':
