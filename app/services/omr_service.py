@@ -174,7 +174,6 @@ def extrair_respostas(roi, mapa_bolhas, raio, limiar=0.35):
   # PRÉ PROCESSAMENTO
   gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
   _, binaria = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-  roi_debug = roi.copy()
   respostas = {}
 
   # LOOP POR QUESTÃO E ALTERNATIVA
@@ -192,26 +191,19 @@ def extrair_respostas(roi, mapa_bolhas, raio, limiar=0.35):
 
       # DECISÃO POR LIMIAR
       taxa = pixels_marcados / pixels_totais if pixels_totais > 0 else 0
-      bolha_marcada = taxa > limiar
 
-      # DEBUG VISUAL
-      cor = (0, 200, 0) if bolha_marcada else (0, 0, 255)
-      cv2.circle(roi_debug, (x, y), raio, cor, thickness=2)
-
-      if bolha_marcada:
+      if taxa > limiar:
         marcadas.append(letra)
 
-      # LÓGICA DE NEGÓCIO
-      if len(marcadas) == 1:
-        respostas[questao] = marcadas[0]
-
-      elif len(marcadas) > 1:
-        respostas[questao] = 'RASURA'
-
-      else:
-        respostas[questao] = 'BRANCO'
+    # LÓGICA DE NEGÓCIO
+    if len(marcadas) == 1:
+      respostas[questao] = marcadas[0]
+    elif len(marcadas) > 1:
+      respostas[questao] = 'RASURA'
+    else:
+      respostas[questao] = 'BRANCO'
   
-  return respostas, roi_debug
+  return respostas
 
 # FUNÇÃO PRINCIPAL
 def corrigir_gabarito(file):
@@ -238,9 +230,8 @@ def corrigir_gabarito(file):
   
   mapa_bolhas, raio = mapear_coordenadas_bolhas(roi_respostas.shape, total_q, total_alt)
 
-  # EXTRAÇÃO DAS REPOSTAS COM DEBUG COLORIDO
-  respostas, roi_debug = extrair_respostas(roi_respostas, mapa_bolhas, raio)
-  cv2.imwrite('debug_coodenadas2.png', roi_debug)
+  # EXTRAÇÃO DAS RESPOSTAS
+  respostas = extrair_respostas(roi_respostas, mapa_bolhas, raio)
 
   return {
       "id_prova": dados_prova['id_prova'],

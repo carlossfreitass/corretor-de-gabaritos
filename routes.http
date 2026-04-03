@@ -1,9 +1,0 @@
-POST http://localhost:5000/gerar-gabarito
-Content-Type: application/json
-
-{
-  "total_questoes": 20,
-  "alternativas_por_questao": 5,
-  "orientacao": "retrato",
-  "id_prova": "A-2026"
-}
