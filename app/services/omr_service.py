@@ -170,6 +170,50 @@ def mapear_coordenadas_bolhas(roi_shape, total_questoes, alternativas):
 
   return coordenadas, raio
 
+def extrair_respostas(roi, mapa_bolhas, raio, limiar=0.35):
+  # PRÉ PROCESSAMENTO
+  gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+  _, binaria = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+  roi_debug = roi.copy()
+  respostas = {}
+
+  # LOOP POR QUESTÃO E ALTERNATIVA
+  for questao, alternativas in mapa_bolhas.items():
+    marcadas = []
+
+    for letra, (x, y) in alternativas.items():
+      # MÁSCARA CIRCULAR
+      mascara = np.zeros(binaria.shape, dtype=np.uint8)
+      cv2.circle(mascara, (x, y), raio, 255, thickness=-1)
+      regiao = cv2.bitwise_and(binaria, binaria, mask=mascara)
+
+      pixels_totais = cv2.countNonZero(mascara)
+      pixels_marcados = cv2.countNonZero(regiao)
+
+      # DECISÃO POR LIMIAR
+      taxa = pixels_marcados / pixels_totais if pixels_totais > 0 else 0
+      bolha_marcada = taxa > limiar
+
+      # DEBUG VISUAL
+      cor = (0, 200, 0) if bolha_marcada else (0, 0, 255)
+      cv2.circle(roi_debug, (x, y), raio, cor, thickness=2)
+
+      if bolha_marcada:
+        marcadas.append(letra)
+
+      # LÓGICA DE NEGÓCIO
+      if len(marcadas) == 1:
+        respostas[questao] = marcadas[0]
+
+      elif len(marcadas) > 1:
+        respostas[questao] = 'RASURA'
+
+      else:
+        respostas[questao] = 'BRANCO'
+  
+  return respostas, roi_debug
+
+# FUNÇÃO PRINCIPAL
 def corrigir_gabarito(file):
   file_bytes = np.frombuffer(file.read(), np.uint8)
   img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
@@ -194,15 +238,11 @@ def corrigir_gabarito(file):
   
   mapa_bolhas, raio = mapear_coordenadas_bolhas(roi_respostas.shape, total_q, total_alt)
 
-  # DEBUG VISUAL: CÍRCULO VERMELHO
-  roi_debug = roi_respostas.copy()
-  for questao, alternativas in mapa_bolhas.items():
-      for letra, (x, y) in alternativas.items():
-          cv2.circle(roi_debug, (x, y), raio, (0, 0, 255), 2) 
-
-  cv2.imwrite("debug_coordenadas.png", roi_debug)
+  # EXTRAÇÃO DAS REPOSTAS COM DEBUG COLORIDO
+  respostas, roi_debug = extrair_respostas(roi_respostas, mapa_bolhas, raio)
+  cv2.imwrite('debug_coodenadas2.png', roi_debug)
 
   return {
-      "prova": dados_prova['id_prova'],
-      "status": "Recorte da prova com debug gerado."
+      "id_prova": dados_prova['id_prova'],
+      "respostas": respostas
   }
