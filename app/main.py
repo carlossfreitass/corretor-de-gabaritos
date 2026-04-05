@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 from services.gabarito_service import gerar_gabarito
 from services.omr_service import corrigir_gabarito
@@ -41,30 +42,30 @@ def rota_corrigir_gabarito():
         return jsonify({"erro": "Nenhum arquivo de imagem enviado."}), 400
 
     # GABARITO OFICIAL
-    import json
     gabarito_raw = request.form.get('gabarito')
     if not gabarito_raw:
-        return jsonify({"erro": "Gabarito oficial não enviado."}), 400
+        return jsonify({"erro": "Gabarito não enviado."}), 400
 
     try:
-        gabarito_oficial = json.loads(gabarito_raw)
+        gabarito = json.loads(gabarito_raw)
     except json.JSONDecodeError:
-        return jsonify({"erro": "Gabarito oficial em formato inválido. Envie um JSON válido."}), 400
+        return jsonify({"erro": "gabarito inválido. Envie um JSON válido."}), 400
 
-    # PARÂMETROS OPCIONAIS
+    # VALOR DA PROVA
     valor_prova = float(request.form.get('valor_prova', 10.0))
 
+    # PESOS
     pesos_raw = request.form.get('pesos')
     pesos = json.loads(pesos_raw) if pesos_raw else None
 
     resultado = corrigir_gabarito(
-        file=file,
-        gabarito_oficial=gabarito_oficial,
-        valor_prova=valor_prova,
-        pesos=pesos,
+        file,
+        gabarito,
+        valor_prova,
+        pesos,
     )
 
     return jsonify(resultado)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

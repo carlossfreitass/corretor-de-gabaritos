@@ -1,0 +1,12 @@
+services:
+  omr-api:
+    build: .
+    container_name: omr_api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+      - ./examples:/examples
+    environment:
+      - FLASK_ENV=development
+    restart: unless-stopped

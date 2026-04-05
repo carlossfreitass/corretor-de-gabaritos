@@ -34,9 +34,9 @@ def criar_folha(total_questoes):
 def carregar_fontes():
     try:
         return (
-            ImageFont.truetype("../fonts/arialbd.ttf", 50),
-            ImageFont.truetype("../fonts/arialbd.ttf", 35),
-            ImageFont.truetype("../fonts/arialbd.ttf", 30),
+            ImageFont.truetype("fonts/arialbd.ttf", 50),
+            ImageFont.truetype("fonts/arialbd.ttf", 35),
+            ImageFont.truetype("fonts/arialbd.ttf", 30),
         )
     except IOError:
         return (ImageFont.load_default(), ImageFont.load_default(), ImageFont.load_default())
