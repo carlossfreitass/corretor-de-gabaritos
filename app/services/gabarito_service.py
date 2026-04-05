@@ -41,6 +41,36 @@ def carregar_fontes():
     except IOError:
         return (ImageFont.load_default(), ImageFont.load_default(), ImageFont.load_default())
 
+# FONTE DO TÍTULO COM TAMANHO ADAPTATIVO
+def carregar_fonte_titulo(nome_prova, largura):
+    titulo = (nome_prova or 'GABARITO').upper()
+
+    margem_ancora  = 50
+    tamanho_ancora = 50
+    respiro        = 20
+    area_disponivel = largura - 2 * (margem_ancora + tamanho_ancora + respiro)
+
+    tamanho = 50
+    tamanho_minimo = 16
+
+    while tamanho > tamanho_minimo:
+        try:
+            font = ImageFont.truetype("fonts/arialbd.ttf", tamanho)
+        except IOError:
+            return ImageFont.load_default()
+
+        largura_texto = font.getlength(titulo)
+
+        if largura_texto <= area_disponivel:
+            return font
+
+        tamanho -= 1
+
+    try:
+        return ImageFont.truetype("fonts/arialbd.ttf", tamanho_minimo)
+    except IOError:
+        return ImageFont.load_default()
+
 # BORDA
 def desenhar_borda_externa(draw, largura, altura):
     margem = 20
@@ -57,9 +87,7 @@ def desenhar_secao_nome(draw, largura, font):
     x2, y2 = largura - 20, 220
     
     draw.rectangle((x1, y1, x2, y2), outline="black", width=3)
-    
     draw.text((x1 + 25, y1 + 45), "Nome:", fill="black", anchor="lm", font=font)
-    
     draw.line((x1 + 130, y1 + 65, x2 - 25, y1 + 65), fill="black", width=2)
 
 # LINHA CABEÇALHO
@@ -186,10 +214,12 @@ def salvar(imagem, id_prova):
 
     return caminho
 
-# FUNÇÃO PRINCIPAL (Arquitetura mantida com nova ordem de chamadas)
+# FUNÇÃO PRINCIPAL
 def gerar_gabarito(nome_prova, id_prova, total_questoes, alternativas):
     imagem, draw, largura, altura = criar_folha(total_questoes)
-    font_titulo, font_texto, font_questao = carregar_fontes()
+    _, font_texto, font_questao = carregar_fontes()
+
+    font_titulo = carregar_fonte_titulo(nome_prova, largura)
 
     desenhar_borda_externa(draw, largura, altura)
     desenhar_anchors(draw, largura, altura)
