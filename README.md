@@ -156,7 +156,7 @@ Recebe uma imagem da folha preenchida e retorna as respostas detectadas junto co
 | Campo | Tipo | Obrigatório | Descrição |
 |---|---|---|---|
 | `file` | File | sim | Imagem da folha preenchida (PNG ou JPG) |
-| `gabarito_oficial` | Text (JSON) | sim | Gabarito de referência para correção |
+| `gabarito` | Text (JSON) | sim | Gabarito de referência para correção |
 | `valor_prova` | Text (float) | não | Valor máximo da prova. Padrão: `10.0` |
 | `pesos` | Text (JSON) | não | Valor em pontos de cada questão. Se omitido, divide `valor_prova` igualmente |
  
@@ -241,6 +241,6 @@ Recebe uma imagem da folha preenchida e retorna as respostas detectadas junto co
 | Key | Value | Type |
 |---|---|---|
 | `file` | _(selecione o arquivo .png)_ | File |
-| `gabarito_oficial` | `{"Q01":"A","Q02":"C","Q03":"B","Q04":"E","Q05":"A","Q06":"D","Q07":"B","Q08":"C","Q09":"E","Q10":"A"}` | Text |
+| `gabarito` | `{"Q01":"A","Q02":"C","Q03":"B","Q04":"E","Q05":"A","Q06":"D","Q07":"B","Q08":"C","Q09":"E","Q10":"A"}` | Text |
 | `valor_prova` | `10.0` | Text |
 | `pesos` | `{"Q01":2,"Q02":1,"Q03":1,"Q04":1,"Q05":1,"Q06":1,"Q07":1,"Q08":1,"Q09":0.5,"Q10":0.5}` | Text |
